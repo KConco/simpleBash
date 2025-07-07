@@ -1,0 +1,3 @@
+Line with $ sign
+Line with ^I tab	end
+Line with newline at end$
