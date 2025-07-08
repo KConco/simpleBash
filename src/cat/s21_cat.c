@@ -1,19 +1,9 @@
-#include <stdio.h>
+#include "s21_cat.h"
 #include <string.h>
 #include <getopt.h>
 
-typedef struct {
-  int number_nonblank;
-  int number_all;
-  int file_arg_index;
-} CatFlags;
-
-FILE *open_file(const char *filename);
-void print_file(FILE *file, const CatFlags *flags);
-void parse_flags(int argc, char *argv[], CatFlags *flags);
-
 int main(int argc, char *argv[]) {
-  CatFlags flags = {0, 0, 1};
+  cat_flags flags = {0, 0, 1};
 
   parse_flags(argc, argv, &flags);
 
@@ -31,10 +21,15 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
-void parse_flags(int argc, char *argv[], CatFlags *flags) {
+void parse_flags(int argc, char *argv[], cat_flags *flags) {
   int opt;
+  static struct option long_options[] = {
+    {"number-nonblank", 0, 0, 'b'},
+    {"number", 0, 0, 'n'},
+    {0, 0, 0, 0}
+  };
 
-  while ((opt = getopt(argc, argv, "bn")) != -1) {
+  while ((opt = getopt_long(argc, argv, "bn", long_options, NULL)) != -1) {
     switch (opt) {
       case 'b':
         flags->number_nonblank = 1;
@@ -44,7 +39,7 @@ void parse_flags(int argc, char *argv[], CatFlags *flags) {
         break;
       case '?':
       default:
-        printf("Unknown flag: -%c\n", optopt);
+        printf("Unknown flag\n");
     }
   }
 
@@ -63,7 +58,7 @@ FILE *open_file(const char *filename) {
   return file;
 }
 
-void print_file(FILE *file, const CatFlags *flags) {
+void print_file(FILE *file, const cat_flags *flags) {
   int c;
   int line_number = 1;
   int at_line_start = 1;

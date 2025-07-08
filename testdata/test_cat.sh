@@ -4,7 +4,7 @@ MY_CAT="../src/cat/s21_cat"
 SYS_CAT="cat"
 
 TEST_FILE="test.txt"
-FLAGS=("" "-b" "-n" "-b -n" "-n -b" "-bn" "-nb")
+FLAGS=("" "-b" "-n" "-b -n" "-n -b" "-bn" "-nb" "--number-nonblank" "--number-nonblank -n" "--number" "--number --number-nonblank" "--number -b")
 
 cd "$(dirname "$0")"
 
