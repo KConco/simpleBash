@@ -6,4 +6,7 @@ s21_cat:
 clean:
 	rm -r s21_cat
 
+test:
+	../../testdata/test_cat.sh
+
 rebuild: clean s21_cat

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MY_CAT="../../src/cat/s21_cat"
+MY_CAT="../src/cat/s21_cat"
 SYS_CAT="cat"
 
 TEST_FILE="test.txt"
@@ -11,7 +11,7 @@ cd "$(dirname "$0")"
 pass=0
 fail=0
 
-: > test_failed.txt
+: > tests_failed.txt
 
 for flag in "${FLAGS[@]}"; do
   diff <($MY_CAT $flag "$TEST_FILE") <($SYS_CAT $flag "$TEST_FILE") > /dev/null
@@ -19,7 +19,7 @@ for flag in "${FLAGS[@]}"; do
     ((pass++))
   else
     ((fail++))
-    echo "FAIL: $flag $TEST_FILE" >> test_failed.txt
+    echo "FAIL: $flag $TEST_FILE" >> tests_failed.txt
   fi
 done
 

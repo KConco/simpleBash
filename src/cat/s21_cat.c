@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
+#include <getopt.h>
 
 typedef struct {
   int number_nonblank;
@@ -32,18 +32,27 @@ int main(int argc, char *argv[]) {
 }
 
 void parse_flags(int argc, char *argv[], CatFlags *flags) {
-  for (int i = 1; i < argc; ++i) {
-    if (strcmp(argv[i], "-b") == 0) {
-      flags->number_nonblank = 1;
-      flags->file_arg_index = i + 1;
-    } else if (strcmp(argv[i], "-n") == 0) {
-      flags->number_all = 1;
-      flags->file_arg_index = i + 1;
-    } else if (argv[i][0] != '-') {
-      flags->file_arg_index = i;
-      break;
+  int opt;
+
+  while ((opt = getopt(argc, argv, "bn")) != -1) {
+    switch (opt) {
+      case 'b':
+        flags->number_nonblank = 1;
+        break;
+      case 'n':
+        flags->number_all = 1;
+        break;
+      case '?':
+      default:
+        printf("Unknown flag: -%c\n", optopt);
     }
   }
+
+  if (flags->number_nonblank) {
+    flags->number_all = 0;
+  }
+
+  flags->file_arg_index = optind;
 }
 
 FILE *open_file(const char *filename) {
