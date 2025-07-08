@@ -1,3 +1,0 @@
-First	line
-	Second line starts with tab
-Third		line	with	tabs

@@ -1,0 +1,20 @@
+Hello, sc21!
+This is a test file.
+Just a few lines.
+Line 4
+
+
+Line 7
+
+Line 9
+
+
+
+Line 13
+14	line tab
+	15 line starts with tab
+16		line	with	tabs
+
+Line with $ sign
+Line with ^I tab	end
+Line with newline at end$
