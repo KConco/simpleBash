@@ -4,9 +4,7 @@
 #include <stdio.h>
 
 typedef struct {
-  int number_nonblank;
-  int number_all;
-  int file_arg_index;
+  int b, n, s, error;
 } cat_flags;
 
 FILE *open_file(const char *filename);
