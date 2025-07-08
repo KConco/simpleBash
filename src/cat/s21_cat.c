@@ -4,17 +4,15 @@
 #include <string.h>
 
 int main(int argc, char *argv[]) {
-  cat_flags flags = {0, 0, 0, 1};
+  cat_flags flags = {0, 0, 0, 0};
 
   parse_flags(argc, argv, &flags);
 
-  FILE *file = open_file(argv[optind]);
-  if (!file) {
-    return 1;
-  }
+  FILE *file = open_file(argv[optind], &flags);
+
   print_file(file, &flags);
-  fclose(file);
-  return 0;
+
+  return flags.error;
 }
 
 void parse_flags(int argc, char *argv[], cat_flags *flags) {
@@ -38,13 +36,13 @@ void parse_flags(int argc, char *argv[], cat_flags *flags) {
       case '?':
       default:
         printf("Unknown flag\n");
-        flags->error = 0;
+        flags->error = 1;
     }
   }
 
   if (optind >= argc) {
     printf("No file specified\n");
-    flags->error = 0;
+    flags->error = 1;
   }
 
   if (flags->b) {
@@ -52,19 +50,25 @@ void parse_flags(int argc, char *argv[], cat_flags *flags) {
   }
 }
 
-FILE *open_file(const char *filename) {
+FILE *open_file(const char *filename, cat_flags *flags) {
   FILE *file = fopen(filename, "r");
   if (!file) {
     printf("No such file\n");
+    flags->error = 1;
   }
   return file;
 }
 
 void print_file(FILE *file, const cat_flags *flags) {
+  if (flags->error) {
+    return;
+  }
+
   int c;
   int line_number = 1;
   int at_line_start = 1;
   int blank_count = 0;
+  
   while ((c = fgetc(file)) != EOF) {
     if (c == '\n') {
       if (flags->s) {
@@ -93,4 +97,5 @@ void print_file(FILE *file, const cat_flags *flags) {
       at_line_start = 1;
     }
   }
+  fclose(file);
 }
