@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MY_CAT="../a.out"
+MY_CAT="../../src/cat/s21_cat"
 SYS_CAT="cat"
 
 TEST_FILE="test.txt"

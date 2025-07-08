@@ -6,5 +6,4 @@ s21_cat:
 clean:
 	rm -r s21_cat
 
-rebuild: 
-	clean s21_cat
+rebuild: clean s21_cat
