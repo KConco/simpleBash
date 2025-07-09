@@ -1,10 +1,8 @@
 #include "s21_cat.h"
-
 #include <getopt.h>
-#include <string.h>
 
 int main(int argc, char *argv[]) {
-  cat_flags flags = {0, 0, 0, 0};
+  cat_flags flags = {0, 0, 0, 0, 0, 0};
 
   parse_flags(argc, argv, &flags);
 
@@ -22,7 +20,7 @@ void parse_flags(int argc, char *argv[], cat_flags *flags) {
                                          {"squeeze-blank", 0, 0, 's'},
                                          {0, 0, 0, 0}};
 
-  while ((opt = getopt_long(argc, argv, "bns", long_options, NULL)) != -1) {
+  while ((opt = getopt_long(argc, argv, "bnsevE", long_options, NULL)) != -1) {
     switch (opt) {
       case 'b':
         flags->b = 1;
@@ -32,6 +30,16 @@ void parse_flags(int argc, char *argv[], cat_flags *flags) {
         break;
       case 's':
         flags->s = 1;
+        break;
+      case 'e':
+        flags->e = 1;
+        flags->v = 1;
+        break;
+      case 'E':
+        flags->e = 1;
+        break;
+      case 'v':
+        flags->v = 1;
         break;
       case '?':
       default:
@@ -76,8 +84,31 @@ void print_file(FILE *file, const cat_flags *flags) {
       printf("%6d\t", line_number++);
     }
 
-    putchar(c);
+    if ((flags->e) && c == '\n') putchar('$');
+    if (flags->v && c != '\n' && c != '\t') {
+      print_visible(c);
+    } else {
+      putchar(c);
+    }
     prev = c;
   }
   fclose(file);
+}
+
+void print_visible(int c) {
+  if (c >= 0 && c < 32) {
+    putchar('^');
+    putchar(c + 64);
+  } else if (c == 127) {
+    putchar('^');
+    putchar('?');
+  } else if (c >= 128 && c <= 159) {
+    printf("M-^");
+    putchar(c - 64);
+  } else if (c >= 160) {
+    printf("M-");
+    putchar(c - 128);
+  } else {
+    putchar(c);
+  }
 }

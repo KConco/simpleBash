@@ -4,11 +4,12 @@
 #include <stdio.h>
 
 typedef struct {
-  int b, n, s, error;
+  int b, n, s, e, v, error;
 } cat_flags;
 
 FILE *open_file(const char *filename, cat_flags *flags);
 void print_file(FILE *file, const cat_flags *flags);
 void parse_flags(int argc, char *argv[], cat_flags *flags);
+void print_visible(int c);
 
 #endif

@@ -18,3 +18,6 @@ Line 13
 Line with $ sign
 Line with ^I tab	end
 Line with newline at end$
+Non-printable: 
+Non-printable extended: 
+Tab and text:	Tab	Text
