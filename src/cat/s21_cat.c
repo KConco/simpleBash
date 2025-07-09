@@ -1,4 +1,5 @@
 #include "s21_cat.h"
+
 #include <getopt.h>
 
 int main(int argc, char *argv[]) {
@@ -20,7 +21,8 @@ void parse_flags(int argc, char *argv[], cat_flags *flags) {
                                          {"squeeze-blank", 0, 0, 's'},
                                          {0, 0, 0, 0}};
 
-  while ((opt = getopt_long(argc, argv, "bnsevtET", long_options, NULL)) != -1) {
+  while ((opt = getopt_long(argc, argv, "bnsevtET", long_options, NULL)) !=
+         -1) {
     switch (opt) {
       case 'b':
         flags->b = 1;
@@ -84,7 +86,7 @@ void print_file(FILE *file, const cat_flags *flags) {
       blank_count++;
       if (blank_count > 0) continue;
     } else if (c != '\n') {
-      blank_count = -1; 
+      blank_count = -1;
     }
 
     if ((prev == '\n') && ((flags->b && c != '\n') || flags->n)) {
