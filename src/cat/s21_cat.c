@@ -2,7 +2,7 @@
 #include <getopt.h>
 
 int main(int argc, char *argv[]) {
-  cat_flags flags = {0, 0, 0, 0, 0, 0};
+  cat_flags flags = {0, 0, 0, 0, 0, 0, 0};
 
   parse_flags(argc, argv, &flags);
 
@@ -20,7 +20,7 @@ void parse_flags(int argc, char *argv[], cat_flags *flags) {
                                          {"squeeze-blank", 0, 0, 's'},
                                          {0, 0, 0, 0}};
 
-  while ((opt = getopt_long(argc, argv, "bnsevE", long_options, NULL)) != -1) {
+  while ((opt = getopt_long(argc, argv, "bnsevtET", long_options, NULL)) != -1) {
     switch (opt) {
       case 'b':
         flags->b = 1;
@@ -31,6 +31,9 @@ void parse_flags(int argc, char *argv[], cat_flags *flags) {
       case 's':
         flags->s = 1;
         break;
+      case 'v':
+        flags->v = 1;
+        break;
       case 'e':
         flags->e = 1;
         flags->v = 1;
@@ -38,8 +41,12 @@ void parse_flags(int argc, char *argv[], cat_flags *flags) {
       case 'E':
         flags->e = 1;
         break;
-      case 'v':
+      case 't':
+        flags->t = 1;
         flags->v = 1;
+        break;
+      case 'T':
+        flags->t = 1;
         break;
       case '?':
       default:
@@ -85,7 +92,10 @@ void print_file(FILE *file, const cat_flags *flags) {
     }
 
     if ((flags->e) && c == '\n') putchar('$');
-    if (flags->v && c != '\n' && c != '\t') {
+    if (flags->t && c == '\t') {
+      putchar('^');
+      putchar('I');
+    } else if (flags->v && c != '\n' && c != '\t') {
       print_visible(c);
     } else {
       putchar(c);

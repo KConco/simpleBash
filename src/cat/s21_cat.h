@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 typedef struct {
-  int b, n, s, e, v, error;
+  int b, n, s, e, v, t, error;
 } cat_flags;
 
 FILE *open_file(const char *filename, cat_flags *flags);
