@@ -3,6 +3,13 @@
 
 #include <stdio.h>
 
+#define ASCII_MIN 0
+#define ASCII_MAX 31
+#define ASCII_DEL 127
+#define ASCII_EXT_MIN 128
+#define ASCII_EXT_MAX 159
+#define ASCII_EXT2_MIN 160
+
 typedef struct {
   int b, n, s, e, v, t, error;
 } cat_flags;

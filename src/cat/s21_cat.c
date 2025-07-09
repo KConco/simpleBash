@@ -106,16 +106,16 @@ void print_file(FILE *file, const cat_flags *flags) {
 }
 
 void print_visible(int c) {
-  if (c >= 0 && c < 32) {
+  if (c >= ASCII_MIN && c <= ASCII_MAX) {
     putchar('^');
     putchar(c + 64);
-  } else if (c == 127) {
+  } else if (c == ASCII_DEL) {
     putchar('^');
     putchar('?');
-  } else if (c >= 128 && c <= 159) {
+  } else if (c >= ASCII_EXT_MIN && c <= ASCII_EXT_MAX) {
     printf("M-^");
     putchar(c - 64);
-  } else if (c >= 160) {
+  } else if (c >= ASCII_EXT2_MIN) {
     printf("M-");
     putchar(c - 128);
   } else {
