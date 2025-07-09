@@ -35,18 +35,14 @@ void parse_flags(int argc, char *argv[], cat_flags *flags) {
         break;
       case '?':
       default:
-        printf("Unknown flag\n");
         flags->error = 1;
     }
   }
+  if (flags->b) flags->n = 0;
 
   if (optind >= argc) {
     printf("No file specified\n");
     flags->error = 1;
-  }
-
-  if (flags->b) {
-    flags->n = 0;
   }
 }
 
@@ -64,38 +60,24 @@ void print_file(FILE *file, const cat_flags *flags) {
     return;
   }
 
-  int c;
+  int c, prev = '\n';
   int line_number = 1;
-  int at_line_start = 1;
   int blank_count = 0;
-  
+
   while ((c = fgetc(file)) != EOF) {
-    if (c == '\n') {
-      if (flags->s) {
-        if (at_line_start) {
-          blank_count++;
-          if (blank_count > 1) {
-            continue;
-          }
-        } else {
-          blank_count = 1;
-        }
-      }
-    } else {
-      blank_count = 0;
+    if (c == '\n' && prev == '\n' && flags->s) {
+      blank_count++;
+      if (blank_count > 0) continue;
+    } else if (c != '\n') {
+      blank_count = -1; 
     }
-    if (at_line_start) {
-      if (flags->b && c != '\n') {
-        printf("%6d\t", line_number++);
-      } else if (flags->n) {
-        printf("%6d\t", line_number++);
-      }
-      at_line_start = 0;
+
+    if ((prev == '\n') && ((flags->b && c != '\n') || flags->n)) {
+      printf("%6d\t", line_number++);
     }
+
     putchar(c);
-    if (c == '\n') {
-      at_line_start = 1;
-    }
+    prev = c;
   }
   fclose(file);
 }

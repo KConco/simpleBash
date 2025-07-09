@@ -5,7 +5,8 @@ SYS_CAT="cat"
 
 TEST_FILE="test.txt"
 FLAGS=("" "-b" "-n" "-b -n" "-n -b" "-bn" "-nb" "--number-nonblank"
- "--number-nonblank -n" "--number" "--number --number-nonblank" "--number -b" "-s")
+ "--number-nonblank -n" "--number" "--number --number-nonblank" "--number -b" "-s" "-s -b" 
+ "-s -n" "-s -b -n" "-s --number-nonblank" "-s --number-nonblank -n")
 
 cd "$(dirname "$0")"
 
