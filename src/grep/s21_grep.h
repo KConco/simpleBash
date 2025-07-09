@@ -3,6 +3,9 @@
 
 typedef struct {
   int e, i, v, c, l, n, error;
+  char *pattern;
 } grep_flags;
+
+void parse_flags(int argc, char *argv[], grep_flags *flags);
 
 #endif

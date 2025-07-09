@@ -7,6 +7,6 @@ clean:
 	rm -r s21_grep
 
 test:
-	../../testdata/test_cat.sh
+	../../testdata/test_grep.sh
 
 rebuild: clean s21_grep
