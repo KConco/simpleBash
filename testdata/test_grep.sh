@@ -5,7 +5,7 @@ SYS_GREP="grep"
 
 TEST_FILE="test.txt"
 PATTERNS=("Line" "a" "sc21" "foo")
-FLAGS=("" "-n" "-i" "-c" "-v" "-vc" "-v -c" "-vic")
+FLAGS=("" "-n" "-i" "-c" "-v" "-vc" "-v -c" "-vic" "-e")
 
 cd "$(dirname "$0")"
 

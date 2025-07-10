@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
 void parse_args(int argc, char *argv[], grep_flags *flags) {
   if (flags->error) return;
   int opt;
-  while ((opt = getopt(argc, argv, "nicv")) != -1) {
+  while ((opt = getopt(argc, argv, "e:nicv")) != -1) {
     switch (opt) {
       case 'n':
         flags->n = 1;
@@ -36,13 +36,21 @@ void parse_args(int argc, char *argv[], grep_flags *flags) {
       case 'v':
         flags->v = 1;
         break;
+      case 'e':
+        flags->e = 1;
+        flags->pattern = optarg;
+        break;
       default:
         flags->error = 1;
     }
   }
 
-  flags->pattern = argv[optind];
-  flags->filename = argv[optind + 1];
+  if (flags->pattern != NULL) {
+    flags->filename = argv[optind];
+  } else {
+    flags->pattern = argv[optind];
+    flags->filename = argv[optind + 1];
+  }
 }
 
 void compile_pattern(grep_flags *flags, regex_t *regex) {
