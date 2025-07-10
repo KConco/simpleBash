@@ -39,6 +39,7 @@ void parse_args(int argc, char *argv[], grep_flags *flags) {
 }
 
 void compile_pattern(grep_flags *flags, regex_t *regex) {
+    if (flags->error) return;
     if (regcomp(regex, flags->pattern, 0)) {
         printf("Invalid regex pattern\n");
         flags->error = 1;
