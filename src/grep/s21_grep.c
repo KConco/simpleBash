@@ -22,10 +22,13 @@ int main(int argc, char *argv[]) {
 void parse_args(int argc, char *argv[], grep_flags *flags) {
   if (flags->error) return;
   int opt;
-  while ((opt = getopt(argc, argv, "n")) != -1) {
+  while ((opt = getopt(argc, argv, "ni")) != -1) {
     switch (opt) {
       case 'n':
         flags->n = 1;
+        break;
+      case 'i':
+        flags->i = REG_ICASE;
         break;
       default:
         flags->error = 1;
@@ -38,7 +41,7 @@ void parse_args(int argc, char *argv[], grep_flags *flags) {
 
 void compile_pattern(grep_flags *flags, regex_t *regex) {
   if (flags->error) return;
-  if (regcomp(regex, flags->pattern, 0)) {
+  if (regcomp(regex, flags->pattern, flags->i) != 0) {
     printf("Invalid regex pattern\n");
     flags->error = 1;
   }
