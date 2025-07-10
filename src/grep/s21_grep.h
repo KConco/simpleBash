@@ -1,6 +1,9 @@
 #ifndef S21_GREP_H
 #define S21_GREP_H
 
+#include <stdio.h>
+#include <regex.h>
+
 typedef struct {
   int e, i, v, c, l, n, error;
   char *pattern, *filename;
