@@ -3,7 +3,7 @@
 #include <getopt.h>
 
 int main(int argc, char *argv[]) {
-  grep_flags flags = {0, 0, 0, 0, 0, 0, 0, NULL, NULL};
+  grep_flags flags = {0, 0, 0, 0, 0, 0, 0, NULL};
   regex_t regex;
   if (argc < 3) {
     printf("Missing arguments\n");
@@ -12,8 +12,11 @@ int main(int argc, char *argv[]) {
 
   parse_args(argc, argv, &flags);
   compile_pattern(&flags, &regex);
-  FILE *file = open_file(&flags);
-  process_file(&flags, &regex, file);
+
+  for (int i = optind; i < argc; ++i) {
+    FILE *file = open_file(argv[i], &flags);
+    process_file(&flags, &regex, file, argv[i]);
+  }
 
   regfree(&regex);
   return flags.error;
@@ -47,11 +50,9 @@ void parse_args(int argc, char *argv[], grep_flags *flags) {
         flags->error = 1;
     }
   }
-  if (flags->pattern != NULL) {
-    flags->filename = argv[optind];
-  } else {
+  if (flags->pattern == NULL) {
     flags->pattern = argv[optind];
-    flags->filename = argv[optind + 1];
+    optind++;
   }
 }
 
@@ -63,9 +64,9 @@ void compile_pattern(grep_flags *flags, regex_t *regex) {
   }
 }
 
-FILE *open_file(grep_flags *flags) {
+FILE *open_file(const char *filename, grep_flags *flags) {
   if (flags->error) return NULL;
-  FILE *file = fopen(flags->filename, "r");
+  FILE *file = fopen(filename, "r");
   if (!file) {
     printf("Could not open file\n");
     flags->error = 1;
@@ -73,7 +74,8 @@ FILE *open_file(grep_flags *flags) {
   return file;
 }
 
-void process_file(grep_flags *flags, regex_t *regex, FILE *file) {
+void process_file(grep_flags *flags, regex_t *regex, FILE *file,
+                  const char *filename) {
   if (flags->error) return;
   char line[4096];
   int line_number = 1;
@@ -98,7 +100,7 @@ void process_file(grep_flags *flags, regex_t *regex, FILE *file) {
     line_number++;
   }
   if (flags->l && found) {
-    printf("%s\n", flags->filename);
+    printf("%s\n", filename);
   } else if (flags->c) {
     printf("%d\n", match_count);
   }
