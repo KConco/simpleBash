@@ -1,44 +1,29 @@
-#include "s21_grep.h"
 #include <stdio.h>
 #include <getopt.h>
 #include <regex.h>
 
+#include "s21_grep.h"
+
 int main(int argc, char *argv[]) {
-
-    grep_flags flags = {0, 0, 0, 0, 0, 0, 0, NULL};
-    if (argc < 3) flags.error = 1;
-    parse_flags(argc, argv, &flags);
-    if (flags.error) return flags.error;
-
-    char *pattern = argv[optind];
-    char *filename = argv[optind + 1];
-
+    grep_flags flags = {0, 0, 0, 0, 0, 0, 0, NULL, NULL};
     regex_t regex;
-    int reti = regcomp(&regex, pattern, 0);
-    if (reti) {
-        return 1;
+    if (argc < 3) {
+        printf("Missing arguments\n");
+        flags.error = 1;
     }
 
-    FILE *f = fopen(filename, "r");
-    if (!f) {
-        regfree(&regex);
-        return 1;
-    }
+    parse_args(argc, argv, &flags);
+    compile_pattern(&flags, &regex);
+    FILE *file = open_file(&flags);
+    process_file(&flags, &regex, file);
 
-    char line[4096];
-    while (fgets(line, sizeof(line), f)) {
-        if (regexec(&regex, line, 0, NULL, 0) == 0) {
-            printf("%s", line);
-        }
-    }
-    fclose(f);
     regfree(&regex);
-    return 0;
+    return flags.error;
 }
 
-void parse_flags(int argc, char *argv[], grep_flags *flags) {
+void parse_args(int argc, char *argv[], grep_flags *flags) {
+    if (flags->error) return;
     int opt;
-    flags->pattern = argv[optind];
     while ((opt = getopt(argc, argv, "n")) != -1) {
         switch (opt) {
             case 'n':
@@ -48,4 +33,35 @@ void parse_flags(int argc, char *argv[], grep_flags *flags) {
                 flags->error = 1;
         }
     }
+
+    flags->pattern = argv[optind];
+    flags->filename = argv[optind + 1];
+}
+
+void compile_pattern(grep_flags *flags, regex_t *regex) {
+    if (regcomp(regex, flags->pattern, 0)) {
+        printf("Invalid regex pattern\n");
+        flags->error = 1;
+    }
+}
+
+FILE *open_file(grep_flags *flags) {
+    if (flags->error) return NULL;
+    FILE *file = fopen(flags->filename, "r");
+    if (!file) {
+      printf("Could not open file\n");
+      flags->error = 1;  
+    }
+    return file;
+}
+
+void process_file(grep_flags *flags, regex_t *regex, FILE *file) {
+    if (flags->error) return;
+    char line[4096];
+    while (fgets(line, sizeof(line), file)) {
+        if (regexec(regex, line, 0, NULL, 0) == 0) {
+            printf("%s", line);
+        }
+    }
+    fclose(file);
 }

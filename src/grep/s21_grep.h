@@ -3,9 +3,12 @@
 
 typedef struct {
   int e, i, v, c, l, n, error;
-  char *pattern;
+  char *pattern, *filename;
 } grep_flags;
 
-void parse_flags(int argc, char *argv[], grep_flags *flags);
+void parse_args(int argc, char *argv[], grep_flags *flags);
+void compile_pattern(grep_flags *flags, regex_t *regex);
+FILE *open_file(grep_flags *flags);
+void process_file(grep_flags *flags, regex_t *regex, FILE *file);
 
 #endif
