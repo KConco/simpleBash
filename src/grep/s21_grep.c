@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
 void parse_args(int argc, char *argv[], grep_flags *flags) {
   if (flags->error) return;
   int opt;
-  while ((opt = getopt(argc, argv, "e:nicv")) != -1) {
+  while ((opt = getopt(argc, argv, "e:nicvl")) != -1) {
     switch (opt) {
       case 'n':
         flags->n = 1;
@@ -40,11 +40,13 @@ void parse_args(int argc, char *argv[], grep_flags *flags) {
         flags->e = 1;
         flags->pattern = optarg;
         break;
+      case 'l':
+        flags->l = 1;
+        break;
       default:
         flags->error = 1;
     }
   }
-
   if (flags->pattern != NULL) {
     flags->filename = argv[optind];
   } else {
@@ -76,10 +78,15 @@ void process_file(grep_flags *flags, regex_t *regex, FILE *file) {
   char line[4096];
   int line_number = 1;
   int match_count = 0;
+  int found = 0;
   while (fgets(line, sizeof(line), file)) {
     int match = (regexec(regex, line, 0, NULL, 0) == 0);
     if ((match && !flags->v) || (!match && flags->v)) {
       match_count++;
+      if (flags->l) {
+        found = 1;
+        break;
+      }
       if (!flags->c) {
         if (flags->n) {
           printf("%d:%s", line_number, line);
@@ -90,7 +97,9 @@ void process_file(grep_flags *flags, regex_t *regex, FILE *file) {
     }
     line_number++;
   }
-  if (flags->c) {
+  if (flags->l && found) {
+    printf("%s\n", flags->filename);
+  } else if (flags->c) {
     printf("%d\n", match_count);
   }
   fclose(file);
