@@ -22,13 +22,16 @@ int main(int argc, char *argv[]) {
 void parse_args(int argc, char *argv[], grep_flags *flags) {
   if (flags->error) return;
   int opt;
-  while ((opt = getopt(argc, argv, "ni")) != -1) {
+  while ((opt = getopt(argc, argv, "nic")) != -1) {
     switch (opt) {
       case 'n':
         flags->n = 1;
         break;
       case 'i':
         flags->i = REG_ICASE;
+        break;
+      case 'c':
+        flags->c = 1;
         break;
       default:
         flags->error = 1;
@@ -61,15 +64,22 @@ void process_file(grep_flags *flags, regex_t *regex, FILE *file) {
   if (flags->error) return;
   char line[4096];
   int line_number = 1;
+  int match_count = 0;
   while (fgets(line, sizeof(line), file)) {
     if (regexec(regex, line, 0, NULL, 0) == 0) {
-      if (flags->n) {
-        printf("%d:%s", line_number, line);
-      } else {
-        printf("%s", line);
+      match_count++;
+      if (!flags->c) {
+        if (flags->n) {
+          printf("%d:%s", line_number, line);
+        } else {
+          printf("%s", line);
+        }
       }
     }
     line_number++;
+  }
+  if (flags->c) {
+    printf("%d\n", match_count);
   }
   fclose(file);
 }
