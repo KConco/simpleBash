@@ -57,13 +57,14 @@ void parse_flags(int argc, char *argv[], cat_flags *flags) {
   }
   if (flags->b) flags->n = 0;
 
-  if (optind >= argc) {
+  if (optind >= argc && !flags->error) {
     printf("No file specified\n");
     flags->error = 1;
   }
 }
 
 FILE *open_file(const char *filename, cat_flags *flags) {
+  if (flags->error) return NULL;
   FILE *file = fopen(filename, "r");
   if (!file) {
     printf("No such file\n");
@@ -73,9 +74,7 @@ FILE *open_file(const char *filename, cat_flags *flags) {
 }
 
 void print_file(FILE *file, const cat_flags *flags) {
-  if (flags->error) {
-    return;
-  }
+  if (flags->error) return;
 
   int c, prev = '\n';
   int line_number = 1;
