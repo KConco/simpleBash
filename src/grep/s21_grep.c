@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
 void parse_args(int argc, char *argv[], grep_flags *flags) {
   if (flags->error) return;
   int opt;
-  while ((opt = getopt(argc, argv, "nic")) != -1) {
+  while ((opt = getopt(argc, argv, "nicv")) != -1) {
     switch (opt) {
       case 'n':
         flags->n = 1;
@@ -32,6 +32,9 @@ void parse_args(int argc, char *argv[], grep_flags *flags) {
         break;
       case 'c':
         flags->c = 1;
+        break;
+      case 'v':
+        flags->v = 1;
         break;
       default:
         flags->error = 1;
@@ -66,7 +69,8 @@ void process_file(grep_flags *flags, regex_t *regex, FILE *file) {
   int line_number = 1;
   int match_count = 0;
   while (fgets(line, sizeof(line), file)) {
-    if (regexec(regex, line, 0, NULL, 0) == 0) {
+    int match = (regexec(regex, line, 0, NULL, 0) == 0);
+    if ((match && !flags->v) || (!match && flags->v)) {
       match_count++;
       if (!flags->c) {
         if (flags->n) {
