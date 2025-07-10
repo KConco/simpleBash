@@ -7,9 +7,10 @@ int main(int argc, char *argv[]) {
 
   parse_flags(argc, argv, &flags);
 
-  FILE *file = open_file(argv[optind], &flags);
-
-  print_file(file, &flags);
+  for (int i = optind; i < argc; ++i) {
+    FILE *file = open_file(argv[i], &flags);
+    print_file(file, &flags);
+  }
 
   return flags.error;
 }
